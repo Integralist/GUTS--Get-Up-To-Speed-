@@ -29,7 +29,6 @@ guts.checkInputSelected = function(input) {
         switch (input.name) {
             case 'groups':
                 this.resizeIframeWidth(this.determineGroupWidth(input.value));
-                this.resizeIframeHeight();
                 break;
             case 'components':
                 //
@@ -38,13 +37,40 @@ guts.checkInputSelected = function(input) {
     }
 };
 
+guts.checkButtonSelected = function(input) {
+    switch (input.id) {
+        case 'js-resize':
+            this.handleCustomResize(input);
+            break;
+        case 'js-unit-tests':
+            this.handleUnitTestDisplay();
+            break;
+    }
+};
+
+guts.handleCustomResize = function(){
+    var button = document.getElementById('js-resize-value'),
+        value  = /\d+/.exec(button.value);
+    
+    if (value) {
+        this.resizeIframeWidth(value);
+    }
+};
+
+guts.handleUnitTestDisplay = function(){
+    var button = document.getElementById('js-unit-tests-value');
+};
+
 guts.delegationHandler = function(e) {
     var target = e.target,
         tag = target.tagName.toLowerCase();
-    
+
     switch (tag) {
         case 'input':
             this.checkInputSelected(target);
+            break;
+        case 'button':
+            this.checkButtonSelected(target);
             break;
     }
 };
@@ -53,6 +79,7 @@ guts.resizeIframeWidth = function(width) {
     console.log('resize iframe width', width);
     if (this.iframe) {
         this.iframe.style.width = width + 'px';
+        this.pubsub.publish('iframe:width:resized');
     }
 };
 
@@ -67,12 +94,10 @@ guts.iframeLoaded = function(){
         setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
     
     this.resizeIframeWidth(setWidthTo);
-    this.resizeIframeHeight();
 };
 
 guts.handleResize = function(){
     this.resizeIframeWidth(document.documentElement.clientWidth);
-    this.resizeIframeHeight();
 };
 
 guts.generateComponentView = function(){
@@ -91,6 +116,7 @@ guts.generateComponentView = function(){
 
 guts.bindEvents = function(){
     this.pubsub.subscribe('iframe:loaded', this.iframeLoaded.bind(this));
+    this.pubsub.subscribe('iframe:width:resized', this.resizeIframeHeight.bind(this));
     window.document.body.addEventListener('click', this.delegationHandler.bind(this), false);
     window.addEventListener('resize', this.handleResize.bind(this), false);
 };
