@@ -45,3 +45,11 @@ For non-JavaScript enabled devices the components themselves should still provid
 The hosting page will be clunkier than normal because we're not using any additional 3rd party libraries or pre-processors to manage our code base (i.e. [RequireJS](http://requirejs.org/) to handle our dependencies/modules or [Sass](http://sass-lang.com/) to allow us to compile a single style sheet from multiple imported style sheets). 
 
 So please keep in mind that we are not advocating the use of multiple `<link>` or `<script>` tags, or the use of `<iframe>`'s etc, these are merely used for the purpose of displaying and manipulating our components in a 'plain vanilla' (read: library agnostic) environment so as to allow greater portability and re-usability.
+
+## Notes
+
+Currently running the `index.html` file via the local file system will cause cross domain errors within Google Chrome (and so some of the application -> specifically resizing our `iframe` wont work). 
+
+I suggest if you're looking at `index.html` via the local file system then you should use Mozilla Firefox instead. 
+
+Otherwise if you're looking at the hosted version of `index.html` you shouldn't have any problems as this issue with the Chrome browser only seem to come into effect when running direct on the local file system.
