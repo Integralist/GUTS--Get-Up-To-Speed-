@@ -1,0 +1,39 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GUTS</title>
+        <link rel="stylesheet" href="Assets/Styles/base.css">
+    </head>
+    <body>
+        <section class="container">
+            <h1><abbr title="Get Up To Speed">GUTS</abbr></h1>
+            <p>For more information on the purpose and focus of this pattern/component library please <a href="README.md">see our README</a>.</p>
+            <p>Please use the options below to toggle on/off specific components and to change how they appear within specific device groups.</p>
+            <ul class="groups list">
+                <li><input type="radio" name="groups" value="1" checked> Group 1 <small>(0px - 419px)</small></li>
+                <li><input type="radio" name="groups" value="2"> Group 2 <small>(420px - 599px)</small></li>
+                <li><input type="radio" name="groups" value="3"> Group 3 <small>(600px - 1007px)</small></li>
+                <li><input type="radio" name="groups" value="4"> Group 4 <small>(1008px - upwards)</small></li>
+            </ul>
+            <ul class="components list">
+                <li><input type="radio" name="components" value="list" checked>List</li>
+                <li><input type="radio" name="components" value="list-horizontal">Horizontal List</li>
+                <li><input type="radio" name="components" value="button-more">'More' button</li>
+                <li><input type="radio" name="components" value="tabs">Tabs</li>
+                <li><input type="radio" name="components" value="header-sub">Sub Header</li>
+                <li><input type="radio" name="components" value="object-media">Media Object</li>
+                <li><input type="radio" name="components" value="grid">Grid</li>
+                <li><input type="radio" name="components" value="timestamp">Time stamp</li>
+            </ul>
+            <p><input maxlength="4" type="number" placeholder="Example: 320" id="js-resize-value"> <button id="js-resize">Custom Resize</button></p>
+            <p><input type="checkbox" id="js-unit-tests-value"> <button id="js-unit-tests">Run Unit Tests</button></p>
+        </section>
+
+        <script>var guts = {};</script>
+        <script src="Assets/Scripts/pubsub.js"></script>
+        <script src="Assets/Scripts/app.js"></script>
+        <script>guts.init();</script>
+    </body>
+</html>
