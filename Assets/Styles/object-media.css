@@ -35,7 +35,7 @@
 
 /* Responsive Styles */
 
-@media (max-width: 318px) { /* because we have a left/right border on our iframe we take that into account in our Media Query */
+@media (max-width: 320px) {
     .media--res .media__img,
     .media--res .media__img--rev {
         outline: 1px solid #CC0101;

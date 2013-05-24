@@ -6,19 +6,25 @@
 
         <link rel="shortcut icon" href="lib/jasmine/jasmine_favicon.png">
         <link rel="stylesheet" href="lib/jasmine/jasmine.css">
-
+    </head>
+    <body>
         <script src="lib/jasmine/jasmine.js"></script>
         <script src="lib/jasmine/jasmine-html.js"></script>
         <script src="lib/sinon/sinon.js"></script>
         <script src="lib/sinon/sinon-jasmine.js"></script>
-        <script src="lib/jasmine/boot.js"></script>
-
+        
         <!-- include source files here... -->
+        <script>var guts = {};</script>
+        <script src="../Assets/Scripts/pubsub.js"></script>
         <script src="../Assets/Scripts/app.js"></script>
 
         <!-- include spec files here... -->
-        <script src="spec/helpers/SpecHelper.js"></script>
         <script src="spec/AppSpec.js"></script>
-    </head>
-    <body></body>
+        <script src="spec/helpers/SpecHelper.js"></script>
+
+        <script>
+            jasmine.getEnv().addReporter(new jasmine.HtmlReporter());
+            jasmine.getEnv().execute();
+        </script>
+    </body>
 </html>

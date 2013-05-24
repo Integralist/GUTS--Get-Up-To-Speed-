@@ -58,7 +58,41 @@ guts.handleCustomResize = function(){
 };
 
 guts.handleUnitTestDisplay = function(){
+    if (!this.unitTestsIframe) {
+        this.createUnitTestIframe();
+    } else {
+        this.toggleUnitTestIframeVisibility();
+    }
+};
+
+guts.toggleUnitTestIframeVisibility = function(){
     var button = document.getElementById('js-unit-tests-value');
+
+    if (button.checked) {
+        this.unitTestsIframe.classList.remove('hide');
+    } else {
+        this.unitTestsIframe.classList.add('hide');
+    }
+};
+
+guts.createUnitTestIframe = function(){
+    var iframe            = document.createElement('iframe');
+        iframe.src        = 'unit-tests/SpecRunner.html';
+        iframe.className  = 'unit-tests';
+
+    iframe.onload = function(){ 
+        guts.pubsub.publish('iframe:loaded', this.unitTestsIframe);
+    };
+    
+    this.unitTestsIframe = iframe;
+
+    document.body.appendChild(iframe);
+};
+
+guts.checkUnitTestIframeCreated = function(){
+    if (this.unitTestsIframe) {
+        this.toggleUnitTestIframeVisibility();
+    }
 };
 
 guts.delegationHandler = function(e) {
@@ -78,21 +112,31 @@ guts.delegationHandler = function(e) {
 guts.resizeIframeWidth = function(width) {
     if (this.iframe) {
         this.iframe.style.width = width + 'px';
-        this.pubsub.publish('iframe:width:resized');
+        this.pubsub.publish('iframe:width:set');
+    }
+
+    if (this.unitTestsIframe) {
+        this.unitTestsIframe.style.width = width + 'px';
+        this.pubsub.publish('iframe:width:set', this.unitTestsIframe);
     }
 };
 
-guts.resizeIframeHeight = function(){
-    if (this.iframe) {
-        this.iframe.style.height = this.iframe.contentWindow.document.body.scrollHeight + 'px';
-    }
+guts.resizeIframeHeight = function(topic, iframe) {
+    iframe = iframe || this.iframe;
+    iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px';
+
+    this.pubsub.publish('iframe:height:set');
 };
 
-guts.iframeLoaded = function(){
-    var screenWidth = document.documentElement.clientWidth,
-        setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
-    
-    this.resizeIframeWidth(setWidthTo);
+guts.iframeLoaded = function(topic, loadingUnitTest) {
+    if (loadingUnitTest) {
+        this.pubsub.publish('iframe:unittest:setheight', this.unitTestsIframe);
+    } else {
+        var screenWidth = document.documentElement.clientWidth,
+            setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
+        
+        this.resizeIframeWidth(setWidthTo);
+    }
 };
 
 guts.handleResize = function(){
@@ -110,12 +154,15 @@ guts.generateComponentView = function(){
 
     this.iframe = iframe;
 
-    container.parentNode.insertBefore(iframe, container.nextSibling); // inserts iframe before <script> elements
+    document.body.appendChild(iframe);
 };
 
 guts.bindEvents = function(){
     this.pubsub.subscribe('iframe:loaded', this.iframeLoaded.bind(this));
-    this.pubsub.subscribe('iframe:width:resized', this.resizeIframeHeight.bind(this));
+    this.pubsub.subscribe('iframe:width:set', this.resizeIframeHeight.bind(this));
+    this.pubsub.subscribe('iframe:height:set', this.checkUnitTestIframeCreated.bind(this));
+    this.pubsub.subscribe('iframe:unittest:setheight', this.resizeIframeHeight.bind(this));
+
     window.document.body.addEventListener('click', this.delegationHandler.bind(this), false);
     window.addEventListener('resize', this.handleResize.bind(this), false);
 };
@@ -124,5 +171,3 @@ guts.init = function(){
     this.bindEvents();
     this.generateComponentView();
 };
-
-guts.init();

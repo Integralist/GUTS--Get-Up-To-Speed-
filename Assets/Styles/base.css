@@ -35,6 +35,10 @@ a:focus {
     text-decoration: none;
 }
 
+.hide {
+    display: none;
+}
+
 .container {
     margin: 1em;
 }
@@ -55,6 +59,10 @@ iframe {
     border: 1px dashed #CC0101;
     overflow: hidden;
     width: 100%;
+}
+
+.unit-tests {
+    display: block;
 }
 
 .push--top {
