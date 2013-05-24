@@ -24,6 +24,10 @@ guts.determineGroupWidth = function(group) {
     return width;
 };
 
+guts.loadComponent = function(input) {
+    this.iframe.src = 'components/' + input.value + '.html';
+};
+
 guts.checkInputSelected = function(input) {
     if (input.type === 'radio') {
         switch (input.name) {
@@ -31,7 +35,7 @@ guts.checkInputSelected = function(input) {
                 this.resizeIframeWidth(this.determineGroupWidth(input.value));
                 break;
             case 'components':
-                //
+                this.loadComponent(input);
                 break;
         }
     }
