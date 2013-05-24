@@ -1,27 +1,3 @@
-/*
-    Example Usage:
-
-    // Create subscriber function to be called when topic publishes an event
-    var testSubscriber = function (topics, data) {
-        console.log(topics + ': ' + data);
-    };
-
-    // Subscribe 'testSubscriber' to the event 'example1'
-    var testSubscription = pubsub.subscribe('example1', testSubscriber);
-
-    // Trigger the 'example1' event multiple times with different data each time
-    pubsub.publish('example1', 'hello world!');
-    pubsub.publish('example1', ['test','a', 'b', 'c']);
-    pubsub.publish('example1', [{ 'color':'blue' }, { 'text' : 'hello' }]);
-
-    // Unsubscribe 'testSubscription' from being notified of published events
-    setTimeout(function(){
-        pubsub.unsubscribe(testSubscription);
-    }, 0);
-
-    // This event will be published but 'testSubscription' will no longer receive a notification of it
-    pubsub.publish('example1', 'hello again!');
- */
 guts.pubsub = (function(){
 
     var doc = document,
