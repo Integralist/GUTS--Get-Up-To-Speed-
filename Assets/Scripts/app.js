@@ -76,7 +76,6 @@ guts.delegationHandler = function(e) {
 };
 
 guts.resizeIframeWidth = function(width) {
-    console.log('resize iframe width', width);
     if (this.iframe) {
         this.iframe.style.width = width + 'px';
         this.pubsub.publish('iframe:width:resized');
