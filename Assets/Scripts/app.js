@@ -63,7 +63,10 @@ guts.resizeIframeHeight = function(){
 };
 
 guts.iframeLoaded = function(){
-    this.resizeIframeWidth(this.GROUP1); // the default size to load when the app initializes
+    var screenWidth = document.documentElement.clientWidth,
+        setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
+    
+    this.resizeIframeWidth(setWidthTo);
     this.resizeIframeHeight();
 };
 
@@ -73,7 +76,7 @@ guts.handleResize = function(){
 };
 
 guts.generateComponentView = function(){
-    var container    = document.getElementById('js-container'),
+    var container    = document.querySelector('.container'),
         iframe       = document.createElement('iframe');
         iframe.src   = 'components/object-media.html';
     
