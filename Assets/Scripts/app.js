@@ -84,7 +84,7 @@ guts.createUnitTestIframe = function(){
         iframe.src        = 'unit-tests/SpecRunner.html';
         iframe.className  = 'unit-tests';
 
-    iframe.onload = function(){ 
+    iframe.onload = function(){
         guts.pubsub.publish('iframe:loaded', this.unitTestsIframe);
     };
     
@@ -127,7 +127,8 @@ guts.resizeIframeWidth = function(width) {
 
 guts.resizeIframeHeight = function(topic, iframe) {
     iframe = iframe || this.iframe;
-    iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px';
+    iframe.style.height = 0; // WebKit returns the current `scrollHeight`, so we reset to zero to allow the content of the iframe to determine the height
+    iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px'; // Firefox doesn't resize properly so we need to add some additional space
 
     this.pubsub.publish('iframe:height:set');
 };
@@ -152,7 +153,7 @@ guts.generateComponentView = function(){
         iframe       = document.createElement('iframe');
         iframe.src   = 'components/object-media.html';
     
-    iframe.onload = function(){ 
+    iframe.onload = function(){
         guts.pubsub.publish('iframe:loaded');
     };
 
