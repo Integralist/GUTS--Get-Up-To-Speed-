@@ -1,0 +1,44 @@
+.media {
+    display: block;
+}
+
+.media:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.media__img {
+    float: left;
+    margin-right: 1em;
+}
+
+/* Reversed image location (right instead of left) */
+.media__img--rev {
+    float: right;
+    margin-left: 1em;
+}
+
+.media__img img,
+.media__img--rev img {
+    display: block;
+}
+
+.media__body {
+    overflow: hidden;
+}
+
+.media__body,
+.media__body > :last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive Styles */
+
+@media (max-width: 318px) { /* because we have a left/right border on our iframe we take that into account in our Media Query */
+    .media--res .media__img,
+    .media--res .media__img--rev {
+        outline: 1px solid #CC0101;
+        max-width: 50%;
+    }
+}
