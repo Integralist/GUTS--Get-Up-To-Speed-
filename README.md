@@ -1,6 +1,6 @@
 # GUTS
 
-Pattern library and style guide for responsive code bases (primarily used by the responsive BBC News site)
+Pattern/Component library and style guide for responsive code bases (primarily used by the responsive BBC News site)
 
 ## Purpose
 
