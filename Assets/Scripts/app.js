@@ -30,13 +30,12 @@ guts.loadComponent = function(input) {
 
 guts.checkInputSelected = function(input) {
     if (input.type === 'radio') {
-        switch (input.name) {
-            case 'groups':
-                this.resizeIframeWidth(this.determineGroupWidth(input.value));
-                break;
-            case 'components':
-                this.loadComponent(input);
-                break;
+        if (input.name === 'groups') {
+            this.resizeIframeWidth(this.determineGroupWidth(input.value));
+        }
+
+        if (input.name === 'components') {
+            this.loadComponent(input);
         }
     }
 };
@@ -54,18 +53,18 @@ guts.checkButtonSelected = function(input) {
 
 guts.handleCustomResize = function(){
     var button = document.getElementById('js-resize-value'),
-        value  = /\d+/.exec(button.value);
+        validNumericalValue  = /\d+/.exec(button.value);
     
-    if (value) {
-        this.resizeIframeWidth(value);
+    if (validNumericalValue) {
+        this.resizeIframeWidth(validNumericalValue);
     }
 };
 
 guts.handleUnitTestDisplay = function(){
-    if (!this.unitTestsIframe) {
-        this.createUnitTestIframe();
-    } else {
+    if (this.unitTestsIframe) {
         this.toggleUnitTestIframeVisibility();
+    } else {
+        this.createUnitTestIframe();
     }
 };
 
@@ -85,7 +84,7 @@ guts.createUnitTestIframe = function(){
         iframe.className  = 'unit-tests';
 
     iframe.onload = function(){
-        guts.pubsub.publish('iframe:loaded', this.unitTestsIframe);
+        guts.pubsub.publish('unit-tests:loaded');
     };
     
     this.unitTestsIframe = iframe;
@@ -103,45 +102,48 @@ guts.delegationHandler = function(e) {
     var target = e.target,
         tag = target.tagName.toLowerCase();
 
-    switch (tag) {
-        case 'input':
-            this.checkInputSelected(target);
-            break;
-        case 'button':
-            this.checkButtonSelected(target);
-            break;
+    if (tag === 'input') {
+        this.checkInputSelected(target);
+    }
+
+    if (tag === 'button') {
+        this.checkButtonSelected(target);
     }
 };
 
 guts.resizeIframeWidth = function(width) {
     if (this.iframe) {
         this.iframe.style.width = width + 'px';
-        this.pubsub.publish('iframe:width:set');
+        this.pubsub.publish('component:width:set');
     }
 
     if (this.unitTestsIframe) {
         this.unitTestsIframe.style.width = width + 'px';
-        this.pubsub.publish('iframe:width:set', this.unitTestsIframe);
+        this.pubsub.publish('unit-tests:width:set');
     }
 };
 
-guts.resizeIframeHeight = function(topic, iframe) {
-    iframe = iframe || this.iframe;
+guts.resizeComponentHeight = function(){
+    iframe = this.iframe;
     iframe.style.height = 0; // WebKit returns the current `scrollHeight`, so we reset to zero to allow the content of the iframe to determine the height
     iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px'; // Firefox doesn't resize properly so we need to add some additional space
 
-    this.pubsub.publish('iframe:height:set');
+    this.pubsub.publish('component:height:set');
 };
 
-guts.iframeLoaded = function(topic, loadingUnitTest) {
-    if (loadingUnitTest) {
-        this.pubsub.publish('iframe:unittest:setheight', this.unitTestsIframe);
-    } else {
-        var screenWidth = document.documentElement.clientWidth,
-            setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
-        
-        this.resizeIframeWidth(setWidthTo);
-    }
+guts.resizeUnitTestsHeight = function(){
+    iframe = this.unitTestsIframe;
+    iframe.style.height = 0; // WebKit returns the current `scrollHeight`, so we reset to zero to allow the content of the iframe to determine the height
+    iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 30) + 'px'; // Firefox doesn't resize properly so we need to add some additional space
+
+    this.pubsub.publish('unit-tests:height:set');
+};
+
+guts.componentLoaded = function(){
+    var screenWidth = document.documentElement.clientWidth,
+        setWidthTo = (screenWidth < this.GROUP1) ? screenWidth : this.GROUP1 /* default size to load when the app initializes */;
+    
+    this.resizeIframeWidth(setWidthTo);
 };
 
 guts.handleResize = function(){
@@ -154,7 +156,7 @@ guts.generateComponentView = function(){
         iframe.src   = 'components/object-media.html';
     
     iframe.onload = function(){
-        guts.pubsub.publish('iframe:loaded');
+        guts.pubsub.publish('component:loaded');
     };
 
     this.iframe = iframe;
@@ -163,10 +165,12 @@ guts.generateComponentView = function(){
 };
 
 guts.bindEvents = function(){
-    this.pubsub.subscribe('iframe:loaded', this.iframeLoaded.bind(this));
-    this.pubsub.subscribe('iframe:width:set', this.resizeIframeHeight.bind(this));
-    this.pubsub.subscribe('iframe:height:set', this.checkUnitTestIframeCreated.bind(this));
-    this.pubsub.subscribe('iframe:unittest:setheight', this.resizeIframeHeight.bind(this));
+    this.pubsub.subscribe('component:loaded', this.componentLoaded.bind(this));
+    this.pubsub.subscribe('component:width:set', this.resizeComponentHeight.bind(this));
+    this.pubsub.subscribe('component:height:set', this.checkUnitTestIframeCreated.bind(this));
+    this.pubsub.subscribe('unit-tests:loaded', this.resizeUnitTestsHeight.bind(this));
+    this.pubsub.subscribe('unit-tests:width:set', this.resizeUnitTestsHeight.bind(this));
+    this.pubsub.subscribe('unit-tests:height:set', this.checkUnitTestIframeCreated.bind(this));
 
     window.document.body.addEventListener('click', this.delegationHandler.bind(this), false);
     window.addEventListener('resize', this.handleResize.bind(this), false);
